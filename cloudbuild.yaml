@@ -4,14 +4,14 @@ steps:
     args:
       - 'build'
       - '-t'
-      - 'northamerica-northeast1-docker.pkg.dev/293112759372/mihir-100938484/my-app:${SHORT_SHA}'
+      - 'us-central1-docker.pkg.dev/293112759372/mihir-100938484/my-app:${SHORT_SHA}'  # Updated region
       - '.'
 
   # Step 2: Push the Docker image to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
-      - 'northamerica-northeast1-docker.pkg.dev/293112759372/mihir-100938484/my-app:${SHORT_SHA}'
+      - 'us-central1-docker.pkg.dev/293112759372/mihir-100938484/my-app:${SHORT_SHA}'  # Updated region
 
   # Step 3: Deploy to Cloud Run (Continuous Deployment)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -20,8 +20,8 @@ steps:
       - 'run'
       - 'deploy'
       - 'my-cloud-run-service'
-      - '--image=northamerica-northeast1-docker.pkg.dev/293112759372/mihir-100938484/my-app:${SHORT_SHA}'
-      - '--region=northamerica-northeast1'
+      - '--image=us-central1-docker.pkg.dev/293112759372/mihir-100938484/my-app:${SHORT_SHA}'  # Updated region
+      - '--region=us-central1'  # Updated region
       - '--platform=managed'
       - '--allow-unauthenticated'
 
@@ -32,6 +32,7 @@ options:
   defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET
 
 substitutions:
-  _REGION: 'northamerica-northeast1'
+  _REGION: 'us-central1'  # Updated region
   _SERVICE_NAME: 'my-cloud-run-service'
   _REPO_NAME: 'mihir-100938484'
+  _PROJECT_ID: '293112759372'
