@@ -1,0 +1,37 @@
+steps:
+  # Step 1: Build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'northamerica-northeast1-docker.pkg.dev/293112759372/mihir-100938484/my-app:${SHORT_SHA}'
+      - '.'
+
+  # Step 2: Push the Docker image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'northamerica-northeast1-docker.pkg.dev/293112759372/mihir-100938484/my-app:${SHORT_SHA}'
+
+  # Step 3: Deploy to Cloud Run (Continuous Deployment)
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'my-cloud-run-service'
+      - '--image=northamerica-northeast1-docker.pkg.dev/293112759372/mihir-100938484/my-app:${SHORT_SHA}'
+      - '--region=northamerica-northeast1'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: N1_HIGHCPU_8
+  requestedVerifyOption: VERIFIED
+  defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET
+
+substitutions:
+  _REGION: 'northamerica-northeast1'
+  _SERVICE_NAME: 'my-cloud-run-service'
+  _REPO_NAME: 'mihir-100938484'
