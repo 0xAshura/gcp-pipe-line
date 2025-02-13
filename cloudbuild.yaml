@@ -3,7 +3,7 @@ steps:
     args: ['build', '-t', 'us-central1-docker.pkg.dev/${_PROJECT_ID}/${_REPO_NAME}/my-app:${SHORT_SHA}', '.']
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'us-central1-docker.pkg.dev/${_PROJECT_ID}/${_REPO_NAME}/my-app:${SHORT_SHA}']
-  - name: 'ubuntu'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk' # Use the Cloud SDK image
     entrypoint: 'bash'
     args:
       - '-c'
@@ -25,7 +25,7 @@ steps:
 
 options:
   logging: CLOUD_LOGGING_ONLY
-  machineType: E2_MEDIUM  # Corrected: Use E2_MEDIUM (or E2_STANDARD_2, etc.)
+  machineType: E2_MEDIUM  # Or E2_STANDARD_2, etc.
   requestedVerifyOption: VERIFIED
   defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET
 
