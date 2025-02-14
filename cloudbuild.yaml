@@ -3,29 +3,13 @@ steps:
     args: ['build', '-t', 'us-central1-docker.pkg.dev/${_PROJECT_ID}/${_REPO_NAME}/my-app:${SHORT_SHA}', '.']
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'us-central1-docker.pkg.dev/${_PROJECT_ID}/${_REPO_NAME}/my-app:${SHORT_SHA}']
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk' # Use the Cloud SDK image
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        #!/bin/bash
-        PROJECT_ID=${_PROJECT_ID}
-        gcloud projects add-iam-policy-binding $PROJECT_ID \
-            --member="serviceAccount:$(gcloud builds describe ${_BUILD_ID} --format="value(serviceAccount)")" \
-            --role="roles/artifactregistry.reader"
-        gcloud projects add-iam-policy-binding $PROJECT_ID \
-            --member="serviceAccount:$(gcloud builds describe ${_BUILD_ID} --format="value(serviceAccount)")" \
-            --role="roles/artifactregistry.writer"
-        gcloud projects add-iam-policy-binding $PROJECT_ID \
-            --member="serviceAccount:$(gcloud builds describe ${_BUILD_ID} --format="value(serviceAccount)")" \
-            --role="roles/cloudrun.developer"
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args: ['run', 'deploy', '${_SERVICE_NAME}', '--image=us-central1-docker.pkg.dev/${_PROJECT_ID}/${_REPO_NAME}/my-app:${SHORT_SHA}', '--region=${_REGION}', '--platform=managed', '--allow-unauthenticated']
 
 options:
   logging: CLOUD_LOGGING_ONLY
-  machineType: E2_MEDIUM  # Or E2_STANDARD_2, etc.
+  machineType: E2_MEDIUM
   requestedVerifyOption: VERIFIED
   defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET
 
