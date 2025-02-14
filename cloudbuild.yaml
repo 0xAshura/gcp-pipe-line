@@ -3,9 +3,16 @@ steps:
     args: ['build', '-t', 'us-central1-docker.pkg.dev/${_PROJECT_ID}/${_REPO_NAME}/my-app:${SHORT_SHA}', '.']
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'us-central1-docker.pkg.dev/${_PROJECT_ID}/${_REPO_NAME}/my-app:${SHORT_SHA}']
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'  # New step using cloud-sdk image
     entrypoint: gcloud
-    args: ['run', 'deploy', '${_SERVICE_NAME}', '--image=us-central1-docker.pkg.dev/${_PROJECT_ID}/${_REPO_NAME}/my-app:${SHORT_SHA}', '--region=${_REGION}', '--platform=managed', '--allow-unauthenticated']
+    args:
+      - 'run'
+      - 'deploy'
+      - '${_SERVICE_NAME}'
+      - '--image=us-central1-docker.pkg.dev/${_PROJECT_ID}/${_REPO_NAME}/my-app:${SHORT_SHA}'
+      - '--region=${_REGION}'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
 
 options:
   logging: CLOUD_LOGGING_ONLY  # Or NONE if you *really* don't need logs
